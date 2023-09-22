@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//prisma including pool automatically
+
+//generate a function 
+generator client {
+  provider = "prisma-client-js"
+}
+
+//where to connect
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNI
+}
+
+//1 model for 1 tabel in mysql
+//Int = data type
+//@id = primary key
+//@default = ค่าเริ่มต้น
+//@unique = unique value
+//@db.VarChar(20) = modify length to 20 charactors
+// ? = type modifler value it can be null => optional
+//transactions = has type modifiler by [] joing mutiple columns 
+//createdAt = createdAt field of your Post model above
+//updatedAt = Automatically stores the time when a record was last updated
+//@map = change column name to ...(something)
+//@@map("users") = map this columns to ...model @@map("")
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique @db.VarChar(20)
+  password     String
+  email        String?
+  sex          Gender?
+  created_at   DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+//transactions = Transaction[] : including join tabel / output by []
+model Category {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+//DateTime = get date
+//Decimal = have to write(value inside)
+//data type : User model
+//@relation = join 2 columns 
+//user = calling User model to join a columns by using @relation(fields: [userId],references: [id]) 
+model Transaction {
+  id         Int      @id @default(autoincrement())
+  payee      String
+  date       DateTime @db.Date()
+  amount     Decimal  @db.Decimal(20, 2)
+  remark     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+}
