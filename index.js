@@ -103,26 +103,80 @@ const run = async () => {
     //   },
     // });
 
-    //Include = unsupported database features / checking that columns and table is relative or not
-    const result = await prisma.user.create({
-      data: {
-        username: "manuel",
-        password: "123456",
-        transactions: {
-          create: {
-            payee: "7-11",
-            amount: 99,
-            date: new Date("2023-09-14"),
-            category: {
-              create: {
-                name: "Beverage",
-              },
-            },
-          },
-        },
-      },
-      include: {
-        transactions: true,
+    //Include = unsupported database features / checking that columns and table is relative or not and join the column and calling another columns.
+    // const result = await prisma.user.create({
+    //   data: {
+    //     username: "manuel",
+    //     password: "123456",
+    //     transactions: {
+    //       create: {
+    //         payee: "7-11",
+    //         amount: 99,
+    //         date: new Date("2023-09-14"),
+    //         category: {
+    //           create: {
+    //             name: "Beverage",
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    //   include: {
+    //     transactions: true,
+    //   },
+    // });
+
+    //UPDATE : by one / tell where we want to update by using (WHERE)
+    //UPDATE : can use Nested
+    // const result = await prisma.user.update({
+    //   data: {
+    //     password: "7654321",
+    //   },
+    //   where: {
+    //     id: 1,
+    //   },
+    // });
+
+    //UPDATE MANY = update multiple values
+    //CREATE MANY cannot use (Nested)
+    // const result = await prisma.user.updateMany({
+    //   data: {
+    //     password: "111111111",
+    //   },
+    //   where: {
+    //     username: {
+    //       startsWith: "R",
+    //     },
+    //   },
+    // });
+
+    //UPSERT : get parameter by object
+    //UPSERT : will check the key inside database if has a key will update / if not will create a new one
+    //WHERE method is must for tell orm to find
+    // const result = await prisma.user.upsert({
+    //   create: {
+    //     username: "Ann",
+    //     password: "122343",
+    //   },
+    //   update: {
+    //     password: "55555555",
+    //   },
+    //   where: {
+    //     username: "Ann",
+    //   },
+    // });
+
+    //DELETE by one
+    // const result = await prisma.user.delete({
+    //   where: {
+    //     username: "Ann",
+    //   },
+    // });
+
+    //DELETE MANY : when we want to delete many record.
+    const result = await prisma.transaction.deleteMany({
+      where: {
+        payee: "7-11",
       },
     });
     console.log(result);
